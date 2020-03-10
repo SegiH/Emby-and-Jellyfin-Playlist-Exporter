@@ -1,0 +1,23 @@
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Newtonsoft.Json.dll
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Ookii.Dialogs.Wpf.dll
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\RestSharp.dll
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Newtonsoft.Json.pdb
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Newtonsoft.Json.xml
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Ookii.Dialogs.Wpf.pdb
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Ookii.Dialogs.Wpf.xml
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\RestSharp.xml
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin Playlist Exporter.csprojAssemblyReference.cache
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\MainWindow.g.cs
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\App.g.cs
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\MainWindow.baml
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin Playlist Exporter.csproj.GenerateResource.cache
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin Playlist Exporter.csproj.CopyComplete
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Jellyfin Playlist Exporter.exe.config
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Jellyfin Playlist Exporter.exe
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\bin\Release\Jellyfin Playlist Exporter.pdb
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin Playlist Exporter_MarkupCompile.cache
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin Playlist Exporter_MarkupCompile.lref
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin Playlist Exporter.g.resources
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin_Playlist_Exporter.Properties.Resources.resources
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin Playlist Exporter.exe
+Z:\Visual Studio 2017\Projects\Emby Playlist Exporter\Emby Playlist Exporter\obj\Release\Jellyfin Playlist Exporter.pdb
