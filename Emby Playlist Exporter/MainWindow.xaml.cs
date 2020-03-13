@@ -11,7 +11,7 @@ namespace Jellyfin_Playlist_Exporter {
     public partial class MainWindow : Window {
         bool isAdding = false;
         Playlists allPlaylists;
-        private Dictionary<string, string> allUserAccounts = new Dictionary<string, string>(); // Holds all projects
+        readonly private Dictionary<string, string> allUserAccounts = new Dictionary<string, string>(); // Holds all projects
 
         public MainWindow() {
             InitializeComponent();            
@@ -23,7 +23,7 @@ namespace Jellyfin_Playlist_Exporter {
                 txtSaveLocation.Text = Properties.Settings.Default.SaveLocation;
 
                 if (!Properties.Settings.Default.UserAccount.Equals("")) {
-                    loadUserAccounts();
+                    LoadUserAccounts();
 
                     // Prevent lstUserAccounts from triggering BtnLoadPlaylists_Click when adding items 
                     this.isAdding = true;
@@ -39,52 +39,6 @@ namespace Jellyfin_Playlist_Exporter {
 
             lstSettings.Items.Add("Save settings");
             lstSettings.Items.Add("Remove saved settings");            
-        }
-
-        private void loadUserAccounts() {
-            IRestClient client;
-            IRestResponse response;
-
-            // Clear all user accounts
-            lstUserAccounts.Items.Clear();
-
-            try {
-                // This prevents the SSL related error "The request was aborted: Could not create SSL/TLS secure channel."
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-                // Call REST endpoint to get all playlists
-                client = new RestClient(txtJellyfinURL.Text + "Users?format=json&api_key=" + txtAPIKey.Password);
-
-                response = client.Execute(new RestRequest());
-
-                // Convert JSON payload to object of type User Account
-                dynamic jsonResponse = JsonConvert.DeserializeObject(response.Content);
-
-                // Add empty option
-                lstUserAccounts.Items.Add("");
-
-                this.isAdding = true;
-
-                for (int counter = 0; counter < jsonResponse.Count; counter++) {
-                     string name = jsonResponse[counter].Name.ToString().Replace("}", "").Replace("{", "");
-                     string id = jsonResponse[counter].Id.ToString().Replace("}", "").Replace("{", "");
-
-                     allUserAccounts.Add(name, id);
-                     lstUserAccounts.Items.Add(name);
-                }
-
-
-                if (!Properties.Settings.Default.UserAccount.Equals("")) {
-                    lstUserAccounts.SelectedItem = Properties.Settings.Default.UserAccount;
-                } else 
-                    lstUserAccounts.SelectedIndex = 0;
-
-                this.isAdding = false;
-            } catch (Exception err) {
-                MessageBox.Show("An error occurred while reading the list of playlists with the error " + err);
-                return;
-            }
         }
 
         // Event when the user clicks on the button to choose the save location
@@ -136,7 +90,7 @@ namespace Jellyfin_Playlist_Exporter {
             }
 
             if (lstUserAccounts.Items.Count == 0)
-                loadUserAccounts();
+                LoadUserAccounts();
 
             if (lstUserAccounts.SelectedIndex == -1 || lstUserAccounts.SelectedIndex == 0)
                  MessageBox.Show("Select the user account from the dropdown and click on load playlists");
@@ -214,6 +168,52 @@ namespace Jellyfin_Playlist_Exporter {
 
             // Sort all items in the listbox
             lstPlaylists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
+        }
+
+        private void LoadUserAccounts() {
+            IRestClient client;
+            IRestResponse response;
+
+            // Clear all user accounts
+            lstUserAccounts.Items.Clear();
+
+            try {
+                // This prevents the SSL related error "The request was aborted: Could not create SSL/TLS secure channel."
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                // Call REST endpoint to get all playlists
+                client = new RestClient(txtJellyfinURL.Text + "Users?format=json&api_key=" + txtAPIKey.Password);
+
+                response = client.Execute(new RestRequest());
+
+                // Convert JSON payload to object of type User Account
+                dynamic jsonResponse = JsonConvert.DeserializeObject(response.Content);
+
+                // Add empty option
+                lstUserAccounts.Items.Add("");
+
+                this.isAdding = true;
+
+                for (int counter = 0; counter < jsonResponse.Count; counter++) {
+                    string name = jsonResponse[counter].Name.ToString().Replace("}", "").Replace("{", "");
+                    string id = jsonResponse[counter].Id.ToString().Replace("}", "").Replace("{", "");
+
+                    allUserAccounts.Add(name, id);
+                    lstUserAccounts.Items.Add(name);
+                }
+
+
+                if (!Properties.Settings.Default.UserAccount.Equals("")) {
+                    lstUserAccounts.SelectedItem = Properties.Settings.Default.UserAccount;
+                } else
+                    lstUserAccounts.SelectedIndex = 0;
+
+                this.isAdding = false;
+            } catch (Exception err) {
+                MessageBox.Show("An error occurred while reading the list of playlists with the error " + err);
+                return;
+            }
         }
 
         // Event when an item is selected or deselected in the list box. The Export Playlists button is disabled if no items are selected in the listbox
@@ -313,31 +313,5 @@ namespace Jellyfin_Playlist_Exporter {
                   }
              }
         }
-    }
-
-    // Classes that hold JSON object payload
-    public class Playlists {
-        public Item[] Items { get; set; }
-        public int TotalRecordCount { get; set; }
-    }
-
-    public class Item {
-         public string Name { get; set; }
-         public string ServerId { get; set; }
-         public string Id { get; set; }
-         public object[] Artists { get; set; }
-         public long RunTimeTicks { get; set; }
-         public bool IsFolder { get; set; }
-         public string Type { get; set; }
-         public Imagetags ImageTags { get; set; }
-         public object[] BackdropImageTags { get; set; }
-         public string MediaType { get; set; }
-         public string OfficialRating { get; set; }
-         public string Path { get; set; }
-         public Playlists PlaylistTracks { get; set; }
-    }
-
-    public class Imagetags {
-         public string Primary { get; set; }
     }
 }
