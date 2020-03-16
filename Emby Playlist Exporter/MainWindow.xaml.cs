@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Windows;
 
 namespace Jellyfin_Playlist_Exporter {
@@ -12,14 +13,15 @@ namespace Jellyfin_Playlist_Exporter {
         bool isAdding = false;
         Playlists allPlaylists;
         readonly private Dictionary<string, string> allUserAccounts = new Dictionary<string, string>(); // Holds all projects
+        Thread loadPlaylistsThread;
 
         public MainWindow() {
-            InitializeComponent();            
+            InitializeComponent();
 
             // Load saved settings if they exist
             if (!Properties.Settings.Default.JellyfinURL.Equals("")) {
                 txtJellyfinURL.Text = Properties.Settings.Default.JellyfinURL;
-                txtAPIKey.Password = Properties.Settings.Default.APIKey;                
+                txtAPIKey.Password = Properties.Settings.Default.APIKey;
                 txtSaveLocation.Text = Properties.Settings.Default.SaveLocation;
 
                 if (!Properties.Settings.Default.UserAccount.Equals("")) {
@@ -29,7 +31,7 @@ namespace Jellyfin_Playlist_Exporter {
                     this.isAdding = true;
                     lstUserAccounts.SelectedItem = Properties.Settings.Default.UserAccount;
                     this.isAdding = false;
-                    
+
                     BtnLoadPlaylists_Click(new object(), new EventArgs());
                 }
             } else {
@@ -38,7 +40,7 @@ namespace Jellyfin_Playlist_Exporter {
             }
 
             lstSettings.Items.Add("Save settings");
-            lstSettings.Items.Add("Remove saved settings");            
+            lstSettings.Items.Add("Remove saved settings");
         }
 
         // Event when the user clicks on the button to choose the save location
@@ -93,17 +95,13 @@ namespace Jellyfin_Playlist_Exporter {
                 LoadUserAccounts();
 
             if (lstUserAccounts.SelectedIndex == -1 || lstUserAccounts.SelectedIndex == 0)
-                 MessageBox.Show("Select the user account from the dropdown and click on load playlists");
+                MessageBox.Show("Select the user account from the dropdown and click on load playlists");
             else
-                 BtnLoadPlaylists_Click(new object(), new EventArgs());
+                BtnLoadPlaylists_Click(new object(), new EventArgs());
         }
 
         // Load playlists 
         private void BtnLoadPlaylists_Click(object sender, EventArgs e) {
-            Console.WriteLine("In BtnLoadPlaylists_Click");
-            IRestClient client, plClient;
-            IRestResponse response, plResponse;
-
             // A user must be selected
             if (lstUserAccounts.SelectedIndex == -1 || lstUserAccounts.SelectedIndex == 0) {
                 MessageBox.Show("Please select the user account");
@@ -128,46 +126,60 @@ namespace Jellyfin_Playlist_Exporter {
             // Clear all items in case the user presses load playlists a 2nd time to refresh the list of playlists.
             lstPlaylists.Items.Clear();
 
-            try {
-                // This prevents the SSL related error "The request was aborted: Could not create SSL/TLS secure channel."
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            // Start a new thread to poad all playlists so the UI doesn't lock up while its loading
+            this.loadPlaylistsThread = new Thread(new ThreadStart(this.LoadPlaylists));
+            loadPlaylistsThread.Start();
+        }
 
-                // Call REST endpoint to get all playlists
-                client = new RestClient(txtJellyfinURL.Text + "Users/" + this.allUserAccounts[lstUserAccounts.SelectedItem.ToString()] + "/Items?format=json&Recursive=true&IncludeItemTypes=Playlist&api_key=" + txtAPIKey.Password);
+        private void LoadPlaylists() {
+            this.Dispatcher.Invoke(() => {
+                IRestClient client=null, plClient;
+                IRestResponse response, plResponse;
 
-                response = client.Execute(new RestRequest());
-
-                // Convert JSON payload to object of type Playlist
-                allPlaylists = JsonConvert.DeserializeObject<Playlists>(response.Content);
-            } catch (Exception err) {
-                MessageBox.Show("An error occurred while reading the list of playlists with the error " + err);
-                return;
-            }
-
-            // Loop through each playlist
-            foreach (var playlist in allPlaylists.Items) {
                 try {
-                    // Call REST endpoint to get all tracks in the current playlist
-                    plClient = new RestClient(txtJellyfinURL.Text + "Playlists/" + playlist.Id + "/Items?Fields=Path&api_key=" + txtAPIKey.Password);
-                    plResponse = plClient.Execute(new RestRequest());
+                    // This prevents the SSL related error "The request was aborted: Could not create SSL/TLS secure channel."
+                    ServicePointManager.Expect100Continue = true;
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                    // Parse JSON
-                    Playlists currPlaylistTracks = JsonConvert.DeserializeObject<Playlists>(plResponse.Content);
+                    this.Dispatcher.Invoke(() => {
+                        // Call REST endpoint to get all playlists
+                        client = new RestClient(txtJellyfinURL.Text + "Users/" + this.allUserAccounts[lstUserAccounts.SelectedItem.ToString()] + "/Items?format=json&Recursive=true&IncludeItemTypes=Playlist&api_key=" + txtAPIKey.Password);
+                    });
 
-                    // Assign to the playlist object
-                    playlist.PlaylistTracks = currPlaylistTracks;
+                    response = client.Execute(new RestRequest());
+
+                    // Convert JSON payload to object of type Playlist
+                    allPlaylists = JsonConvert.DeserializeObject<Playlists>(response.Content);
                 } catch (Exception err) {
-                    MessageBox.Show("An error occurred while reading the playlist tracks from the playlist " + playlist.Name + " with the error " + err);
+                    MessageBox.Show("An error occurred while reading the list of playlists with the error " + err);
                     return;
                 }
 
-                // Add playlist name to listbox
-                lstPlaylists.Items.Add(playlist.Name);
-            }
+                // Loop through each playlist
+                foreach (var playlist in allPlaylists.Items) {
+                    try {
 
-            // Sort all items in the listbox
-            lstPlaylists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
+                        // Call REST endpoint to get all tracks in the current playlist
+                        plClient = new RestClient(txtJellyfinURL.Text + "Playlists/" + playlist.Id + "/Items?Fields=Path&api_key=" + txtAPIKey.Password);
+                        plResponse = plClient.Execute(new RestRequest());
+
+                        // Parse JSON
+                        Playlists currPlaylistTracks = JsonConvert.DeserializeObject<Playlists>(plResponse.Content);
+
+                        // Assign to the playlist object
+                        playlist.PlaylistTracks = currPlaylistTracks;
+                    } catch (Exception err) {
+                        MessageBox.Show("An error occurred while reading the playlist tracks from the playlist " + playlist.Name + " with the error " + err);
+                        return;
+                    }
+
+                    // Add playlist name to listbox
+                    lstPlaylists.Items.Add(playlist.Name);
+                }
+
+                // Sort all items in the listbox
+                lstPlaylists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
+            });
         }
 
         private void LoadUserAccounts() {
@@ -182,8 +194,8 @@ namespace Jellyfin_Playlist_Exporter {
                 ServicePointManager.Expect100Continue = true;
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                // Call REST endpoint to get all playlists
-                client = new RestClient(txtJellyfinURL.Text + "Users?format=json&api_key=" + txtAPIKey.Password);
+                // Call REST endpoint to get all playlists - 
+                client = new RestClient(txtJellyfinURL.Text + (!txtJellyfinURL.Text.EndsWith("/") ? "/" : "") + "Users?format=json&api_key=" + txtAPIKey.Password);
 
                 response = client.Execute(new RestRequest());
 
