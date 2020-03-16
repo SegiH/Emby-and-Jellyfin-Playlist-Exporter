@@ -1,6 +1,10 @@
 # Emby and Jellyfin PLaylist Exporter
 
-Emby and Jellyfin Playlist Exporter is a Windows application developed in C# which lets you export your playlists from Emby or Jellyfin in m3u8 format which is a playlist format that can be easily backed up and restored and can also work with modern media players like VLC.
+Emby and Jellyfin Playlist Exporter is a Windows application developed in C# which lets you export your playlists from Emby or Jellyfin in m3u8 format which is a playlist format that can be easily backed up and restored 
+and can also work with modern media players like VLC.
+
+# Building the application
+I have included Windows 64-bit binaries but if you want to build the application yourself, download Visual Studio 2019 and choose build solution
 
 ## Requirements
  - A media server running Emby or Jellyfin
