@@ -160,7 +160,7 @@ namespace Jellyfin_Playlist_Exporter {
                     try {
 
                         // Call REST endpoint to get all tracks in the current playlist
-                        plClient = new RestClient(txtJellyfinURL.Text + "Playlists/" + playlist.Id + "/Items?Fields=Path&api_key=" + txtAPIKey.Password);
+                        plClient = new RestClient(txtJellyfinURL.Text + "Playlists/" + playlist.Id + "/Items?Fields=Path&userId=" + this.allUserAccounts[lstUserAccounts.SelectedItem.ToString()] + "&api_key=" + txtAPIKey.Password);
                         plResponse = plClient.Execute(new RestRequest());
 
                         // Parse JSON
