@@ -1,0 +1,53 @@
+2025-03-01 16:41:32.485 -08:00 [ERR] The error Value cannot be null.
+Parameter name: baseUrl occurred while reading the list of playlists
+2025-03-01 17:24:02.378 -08:00 [ERR] The error Value cannot be null.
+Parameter name: baseUrl occurred while reading the list of playlists
+2025-03-01 17:25:18.765 -08:00 [ERR] The error Value cannot be null.
+Parameter name: baseUrl occurred while reading the list of playlists
+2025-03-01 17:44:49.419 -08:00 [ERR] "An error occurred while writing the m3u8 playlist(s) with the error " $Access to the path 'C:\Users\Segi\Desktop\^Practice Tonight.m3u8' is denied.
+2025-03-01 17:48:43.167 -08:00 [ERR] "An error occurred while writing the m3u8 playlist(s) with the error " $Access to the path 'C:\Users\Segi\Desktop\^Practice Tonight.m3u8' is denied.
+2025-03-01 21:27:02.903 -08:00 [ERR] "An error occurred while reading the list of playlists with the error " $Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: A. Path '', line 0, position 0.
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value)
+   at EmbyJellyfin_Playlist_Exporter.MainWindow.LoadUserAccounts() in C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\MainWindow.xaml.cs:line 392
+2025-03-01 21:30:05.396 -08:00 [ERR] "An error occurred while reading the list of playlists with the error " $Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: A. Path '', line 0, position 0.
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value)
+   at EmbyJellyfin_Playlist_Exporter.MainWindow.LoadUserAccounts() in C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\MainWindow.xaml.cs:line 392
+2025-03-01 21:31:14.910 -08:00 [ERR] "An error occurred while reading the list of playlists with the error " $Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: A. Path '', line 0, position 0.
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value)
+   at EmbyJellyfin_Playlist_Exporter.MainWindow.LoadUserAccounts() in C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\MainWindow.xaml.cs:line 392
+2025-03-01 21:32:28.967 -08:00 [ERR] "An error occurred while reading the user accounts with the error " $Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: A. Path '', line 0, position 0.
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value)
+   at EmbyJellyfin_Playlist_Exporter.MainWindow.LoadUserAccounts() in C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\MainWindow.xaml.cs:line 392
+2025-03-01 23:30:00.562 -08:00 [ERR] "An error occurred while reading the user accounts with the error " $Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: A. Path '', line 0, position 0.
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value)
+   at EmbyJellyfin_Playlist_Exporter.MainWindow.LoadUserAccounts() in C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\MainWindow.xaml.cs:line 449

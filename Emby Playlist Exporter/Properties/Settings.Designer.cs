@@ -8,11 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Jellyfin_Playlist_Exporter.Properties {
+namespace EmbyJellyfin_Playlist_Exporter.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.2.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.6.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,12 +26,12 @@ namespace Jellyfin_Playlist_Exporter.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string JellyfinURL {
+        public string URL {
             get {
-                return ((string)(this["JellyfinURL"]));
+                return ((string)(this["URL"]));
             }
             set {
-                this["JellyfinURL"] = value;
+                this["URL"] = value;
             }
         }
         
@@ -68,6 +68,18 @@ namespace Jellyfin_Playlist_Exporter.Properties {
             }
             set {
                 this["UserAccount"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ServerType {
+            get {
+                return ((string)(this["ServerType"]));
+            }
+            set {
+                this["ServerType"] = value;
             }
         }
     }

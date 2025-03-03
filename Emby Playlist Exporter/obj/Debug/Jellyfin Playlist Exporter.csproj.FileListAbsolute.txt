@@ -1,0 +1,126 @@
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.exe.config
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.exe
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.pdb
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.dll
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\RestSharp.dll
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.pdb
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.xml
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\RestSharp.xml
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.AssemblyReference.cache
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.SuggestedBindingRedirects.cache
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\MainWindow.g.cs
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\App.g.cs
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter_MarkupCompile.cache
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter_MarkupCompile.lref
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\MainWindow.baml
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.g.resources
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin_Playlist_Exporter.Properties.Resources.resources
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.GenerateResource.cache
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.CoreCompileInputs.cache
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.CopyComplete
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.exe
+C:\Users\Segi\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.pdb
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.AssemblyReference.cache
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.SuggestedBindingRedirects.cache
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\MainWindow.g.cs
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\App.g.cs
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter_MarkupCompile.cache
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter_MarkupCompile.lref
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.exe.config
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.exe
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.pdb
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.dll
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\RestSharp.dll
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.pdb
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.xml
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\RestSharp.xml
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\MainWindow.baml
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.g.resources
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin_Playlist_Exporter.Properties.Resources.resources
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.GenerateResource.cache
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.CoreCompileInputs.cache
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.CopyComplete
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.exe
+C:\Users\Segi\Favorites\Downloads\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.pdb
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.exe.config
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.exe
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Jellyfin Playlist Exporter.pdb
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Logging.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Options.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Primitives.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\RestSharp.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Buffers.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Diagnostics.DiagnosticSource.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Memory.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.ValueTuple.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.DependencyInjection.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Logging.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Options.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Primitives.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.pdb
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Ookii.Dialogs.Wpf.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\RestSharp.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Buffers.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Diagnostics.DiagnosticSource.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Memory.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.ValueTuple.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.AssemblyReference.cache
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.SuggestedBindingRedirects.cache
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\MainWindow.g.cs
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\App.g.cs
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter_MarkupCompile.cache
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter_MarkupCompile.lref
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\MainWindow.baml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.g.resources
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin_Playlist_Exporter.Properties.Resources.resources
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.GenerateResource.cache
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.CoreCompileInputs.cache
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.csproj.CopyComplete
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.exe
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\obj\Debug\Jellyfin Playlist Exporter.pdb
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Configuration.Binder.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Configuration.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Logging.Configuration.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Options.ConfigurationExtensions.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Serilog.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Serilog.Extensions.Logging.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Serilog.Sinks.File.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.IO.Pipelines.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Text.Json.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Threading.Channels.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Configuration.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Configuration.Abstractions.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Configuration.Binder.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Logging.Configuration.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Microsoft.Extensions.Options.ConfigurationExtensions.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Serilog.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Serilog.Extensions.Logging.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Serilog.Sinks.File.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.IO.Pipelines.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Text.Encodings.Web.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Text.Json.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\System.Threading.Channels.xml
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Serilog.Sinks.Console.dll
+C:\Users\Segi\Desktop\Emby-and-Jellyfin-Playlist-Exporter-main\Emby Playlist Exporter\bin\Debug\Serilog.Sinks.Console.xml
