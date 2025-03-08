@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ookii.Dialogs.Wpf;
 using RestSharp;
 using System;
@@ -9,138 +10,40 @@ using System.Threading;
 using System.Windows;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using System.Xml.Linq;
 using Jellyfin_Playlist_Exporter.Models;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Reflection;
+using System.Windows.Navigation;
+using System.Windows.Documents;
+using System.Windows.Media;
 using System.Linq;
 
-/*
-   TODO:
-
-   Fix settings 
-*/
 namespace EmbyJellyfin_Playlist_Exporter
 {
     public partial class MainWindow : Window {
-        readonly List<string> firstElements = new List<string> { "lblURL", "txtURL", "lblAPIKey", "txtAPIKey", "btnConnect" };
+        readonly List<string> firstElements = new List<string> { "lblURL", "txtURL", "lblAPIKey", "txtAPIKey", "btnConnect", "menu" };
         readonly List<string> secondElements = new List<string> { "lblUserAccount", "lstUserAccounts" };
         readonly List<string> remainingElements = new List<string> { "btnSaveLocation", "chkSelectAllNone", "lstPlaylists", "lblSaveLocation", "txtSaveLocation" };
         readonly List<ElementModel> elementsProperties = new List<ElementModel> { };
 
         Playlists allPlaylists;
         bool isAdding = false;
-        bool isLoading = false;
-        bool selectAllNone = false;
+        bool isAdjusted = false;
+        readonly bool isLoading = false;
+        readonly bool selectAllNone = false;
         readonly private Dictionary<string, string> allUserAccounts = new Dictionary<string, string>(); // Holds all user account data
         Thread loadPlaylistsThread;
         readonly ILogger<MainWindow> logger;
-        int topAdjustment = 40;
+        readonly int topAdjustment = 40;
+        readonly bool demoMode = false;
+        List<string> embyDemoPlaylists = new List<string> { "90s", "Alternative", "Death Metal", "Rock" };
+        List<string> jellyfinDemoPlaylists = new List<string> { "Classic Rock", "Random", "Punk", "80s" };
 
         public MainWindow() {
             InitializeComponent();
 
-            elementsProperties.Add(new ElementModel() {
-                ElementName = "lblServerType",
-                Left = 40,
-                Top = 10
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "lstServerType",
-                Left = 124,
-                Top = 13
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "lblURL",
-                Left = 40,
-                Top = 50
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "txtURL",
-                Left = 124,
-                Top = 53
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "lblAPIKey",
-                Left = 40,
-                Top = 90
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "btnConnect",
-                Left = 532,
-                Top = 93
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "txtAPIKey",
-                Left = 124,
-                Top = 93
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "lblUserAccount",
-                Left = 40,
-                Top = 130
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "txtUserAccount",
-                Left = 124,
-                Top = 133
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "txtPlaylists",
-                Left = 124,
-                Top = 173
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "lblSaveLocation",
-                Left = 40,
-                Top = 210
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "txtSaveLocation",
-                Left = 124,
-                Top = 213
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "btnSaveLocation",
-                Left = 532,
-                Top = 213
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "chkSelectAllNone",
-                Left = 40,
-                Top = 250
-            });
-
-            elementsProperties.Add(new ElementModel()
-            {
-                ElementName = "lstPlaylists",
-                Left = 40,
-                Top = 285
-            });
+            InitElementProperties();
 
             Log.Logger = new LoggerConfiguration()
             .WriteTo.File("ejpe.log", rollingInterval: RollingInterval.Day)
@@ -153,19 +56,19 @@ namespace EmbyJellyfin_Playlist_Exporter
 
             logger = loggerFactory.CreateLogger<MainWindow>();
 
-            RunStep(HideShowElementsEnum.HideAll.ToString());
-
             isLoading = true;
 
-            // Load saved settings if they exist
-            /*if (!Properties.Settings.Default.URL.Equals("")) {
+            RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.HideAll.ToString());
+
+            // Load saved settings
+            if (!Properties.Settings.Default.URL.Equals("")) {
                 txtURL.Text = Properties.Settings.Default.URL;
                 txtAPIKey.Password = Properties.Settings.Default.APIKey;
                 txtSaveLocation.Text = Properties.Settings.Default.SaveLocation;
 
                 lstServerType.SelectedItem = Properties.Settings.Default.ServerType;
 
-                if (Properties.Settings.Default.ServerType == Servers.Emby)
+                if (Properties.Settings.Default.ServerType == ServerTypes.Emby)
                 {
                     lblUserAccount.Visibility = Visibility.Hidden;
                     lstUserAccounts.Visibility = Visibility.Hidden;
@@ -175,53 +78,58 @@ namespace EmbyJellyfin_Playlist_Exporter
                 if (!Properties.Settings.Default.UserAccount.Equals("") && !Properties.Settings.Default.UserAccount.Equals("-1")) {
                     LoadUserAccounts();
 
-                    // Prevent lstUserAccounts from triggering BtnLoadPlaylists_Click when adding items 
-                    this.isAdding = true;
+                    // Prevent lstUserAccounts from triggering LoadPlaylistValidation when adding items
+                    isAdding = true;
                     lstUserAccounts.SelectedItem = Properties.Settings.Default.UserAccount;
-                    this.isAdding = false;
+                    isAdding = false;
 
-                    BtnLoadPlaylists_Click(new object(), new EventArgs());
+                    LoadPlaylistValidation();
                 }
             } else {
                 // Use the desktop path as the default save location
                 txtSaveLocation.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            }
-
-            lstSettings.Items.Add("Save settings");
-            lstSettings.Items.Add("Remove saved settings");*/
+            };
 
             lstServerType.Items.Add("");
-            lstServerType.Items.Add(ServerTypesEnum.Emby);
-            lstServerType.Items.Add(ServerTypesEnum.Jellyfin);
+            lstServerType.Items.Add(ServerTypes.Emby);
+            lstServerType.Items.Add(ServerTypes.Jellyfin);
 
             lstServerType.SelectedIndex = -1;
 
             isLoading = false;
+
+            CheckForUpdates();
         }
-       
+
         private void AdjustElementsTop()
         {
             string serverType = ServerType();
 
-            if (serverType != ServerTypesEnum.Jellyfin)
+            if (serverType != ServerTypes.Jellyfin && !isAdjusted)
             {
-                if (lblUserAccount.Visibility == Visibility.Hidden)
-                {
-                    var result = elementsProperties.FirstOrDefault(e => e.ElementName == "lblSaveLocation");
+                AdjustTop("lblSaveLocation", topAdjustment * -1);
+                AdjustTop("txtSaveLocation", topAdjustment * -1);
+                AdjustTop("btnSaveLocation", topAdjustment * -1);
+                AdjustTop("chkSelectAllNone", topAdjustment * -1);
+                AdjustTop("lstPlaylists", topAdjustment * -1);
 
-                    AdjustTop("btnLoadPlaylists", topAdjustment * -1);
-                    AdjustTop("lblSaveLocation", topAdjustment * -1);
-                    AdjustTop("txtSaveLocation", topAdjustment * -1);
-                    AdjustTop("btnSaveLocation", topAdjustment * -1);
-                    AdjustTop("chkSelectAllNone", topAdjustment * -1);
-                    AdjustTop("lstPlaylists", topAdjustment * -1);
-                }
+                isAdjusted = true;
+            }
+            else if (serverType == ServerTypes.Jellyfin && isAdjusted)
+            {
+                AdjustTop("lblSaveLocation", topAdjustment);
+                AdjustTop("txtSaveLocation", topAdjustment);
+                AdjustTop("btnSaveLocation", topAdjustment);
+                AdjustTop("chkSelectAllNone", topAdjustment);
+                AdjustTop("lstPlaylists", topAdjustment);
+
+                isAdjusted = false;
             }
         }
 
         private void AdjustTop(string elementName, int topAdjustmentAmount)
         {
-            var el = this.FindName(elementName) as FrameworkElement;
+            var el = FindName(elementName) as FrameworkElement;
 
             if (el != null)
             {
@@ -245,7 +153,7 @@ namespace EmbyJellyfin_Playlist_Exporter
         }
 
         // Event when user clicks on Export Playlist
-        private void BtnExportPlaylists_Click(object sender, EventArgs e) {
+        private async void BtnExportPlaylists_Click(object sender, EventArgs e) {
             // Validate that a save location was selected. Since the save location field is read only and the app sets the desktop as the default location when the form loads, this shouldn't ever happen
             if (txtSaveLocation.Text.Equals("")) {
                 MessageBox.Show("Please select the save location");
@@ -262,6 +170,50 @@ namespace EmbyJellyfin_Playlist_Exporter
                     {
                         if (lstPlaylists.SelectedItems[counter].ToString().Equals(playlist.Name))
                         {
+                            // Get playlist tracks
+                            string playlistItemsURL = "";
+
+                            switch (lstServerType.SelectedItem)
+                            {
+                                case ServerTypes.Jellyfin:
+                                    playlistItemsURL = GenerateURL(ServerTypes.Jellyfin, URLTypes.JellyfinPlaylistItemsURL, playlist.Id);
+
+                                    if (playlistItemsURL == "")
+                                    {
+                                        logger.LogError($"An error occurred while generating the Jellyfin playlist items URL");
+                                        Log.CloseAndFlush();
+                                        return;
+                                    }
+
+                                    break;
+                                case ServerTypes.Emby:
+                                    playlistItemsURL = GenerateURL(ServerTypes.Emby, URLTypes.EmbyPlaylistItemsURL, playlist.Id);
+
+                                    if (playlistItemsURL == "")
+                                    {
+                                        logger.LogError($"An error occurred while generating the Emby playlist items URL");
+                                        Log.CloseAndFlush();
+                                        return;
+                                    }
+                                    break;
+                            }
+
+                            RestResult playlistItemsResult = await ExecuteRestRequest(playlistItemsURL);
+
+                            if (playlistItemsResult.Status == "error")
+                            {
+                                logger.LogError($"The error {playlistItemsResult.ErrorMessage} occurred while reading the playlists items for the playlist {playlist.Name}");
+                                Log.CloseAndFlush();
+                                MessageBox.Show($"An error occurred while reading the playlists items for the playlist {playlist.Name}");
+                                return;
+                            }
+
+                            // Parse JSON
+                            Playlists currPlaylistTracks = JsonConvert.DeserializeObject<Playlists>(playlistItemsResult.Response.Content);
+
+                            // Assign to the playlist object
+                            playlist.PlaylistTracks = currPlaylistTracks;
+
                             // Write M3U
                             WriteM3U(playlist.Name, playlist.PlaylistTracks);
                         }
@@ -271,14 +223,25 @@ namespace EmbyJellyfin_Playlist_Exporter
             {
                 logger.LogError($"The error {ex.Message} occurred exporting the playlists");
                 Log.CloseAndFlush();
-                MessageBox.Show($"An error occurred exporting the playlists");
+                MessageBox.Show($"An error occurred exporting the playlists.");
+
                 return;
             }
 
             MessageBox.Show("All playlist(s) have been saved");
         }
 
-        private void BtnConnect_Click(object sender, EventArgs e) {
+        private async void BtnConnect_Click(object sender, EventArgs e) {
+            if (demoMode)
+            {
+                txtURL.Background = new SolidColorBrush(Colors.Black);
+                txtAPIKey.Background = new SolidColorBrush(Colors.Black);
+                txtSaveLocation.Background = new SolidColorBrush(Colors.Black);
+            }
+
+            string embyServerKey = "SystemUpdateLevel";
+            string jellyfinServerKey = "WebPath";
+
             // Validate required fields
             if (txtURL.Text.Equals("")) {
                 MessageBox.Show("Please enter the URL of your Jellyfin instance");
@@ -290,43 +253,550 @@ namespace EmbyJellyfin_Playlist_Exporter
                 return;
             }
 
-            if (lstUserAccounts.Items.Count == 0 && ServerType() == ServerTypesEnum.Jellyfin)
-                LoadUserAccounts();
-
             string serverType = ServerType();
 
-            if (serverType == "") // This shouldn't eveer happen. You shouldn't be able to click on this button until after selecting a server type
+            if (serverType == "") // This shouldn't ever happen. You shouldn't be able to click on this button until after selecting a server type
             {
                 MessageBox.Show("Please select the server type");
                 return;
             }
-            else if (serverType == ServerTypesEnum.Jellyfin)
+            else if (serverType == ServerTypes.Jellyfin)
             {
-                if (lstUserAccounts.SelectedIndex == -1)
+                // Validate that API Key is valid against Jellyfin
+                string jellyfinPingURL = GenerateURL(ServerTypes.Jellyfin, URLTypes.JellyfinPingURL);
+                
+                if (jellyfinPingURL == "")
                 {
-                    MessageBox.Show("Select the user account from the dropdown and click on load playlists");
+                    logger.LogError($"An error occurred while generating Jellyfin ping URL");
+                    Log.CloseAndFlush();
                     return;
                 }
 
-                RunStep(HideShowElementsEnum.Second);
-            } else if (serverType == ServerTypesEnum.Emby)
+                RestResult jellyfinPingResult = await ExecuteRestRequest(jellyfinPingURL);
+
+                if (jellyfinPingResult.Status == "error")
+                {
+                    logger.LogError($"An error occurred while connecting to {lstServerType.SelectedItem} with the error {jellyfinPingResult.ErrorMessage}");
+                    Log.CloseAndFlush();
+                    MessageBox.Show($"Unable to connect with {lstServerType.SelectedItem}. Please make sure that the URL and API key are correct");
+                    return;
+                }
+                else if (jellyfinPingResult.Status == "ok") // Make sure that this is really a Jellyfin server
+                {
+                    JObject serverTypeResponse = JsonConvert.DeserializeObject<JObject>(jellyfinPingResult.Response.Content);
+
+                    if (serverTypeResponse != null)
+                    {
+                        string checkKeyValue = serverTypeResponse[jellyfinServerKey]?.ToString();
+
+                        if (checkKeyValue == null)
+                        {
+                            MessageBox.Show($"The server that you selected does not appear to be an {lstServerType.SelectedItem} server");
+                            lstServerType.SelectedIndex = -1;
+                            lstServerType.IsEnabled = true;
+                            return;
+                        }
+                    }
+                }
+
+                if (lstUserAccounts.SelectedIndex == -1)
+                {
+                    //MessageBox.Show("Select the user account from the User dropdown");
+                    RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.Second);
+                    LoadUserAccounts();
+                    return;
+                }
+
+                RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.Second);
+            } else if (serverType == ServerTypes.Emby)
             {
-                RunStep(HideShowElementsEnum.Playlists);
-                RunStep(HideShowElementsEnum.Remaining);
-                
-                // Start a new thread to poad all playlists so the UI doesn't lock up while its loading
-                this.loadPlaylistsThread = new Thread(new ThreadStart(this.LoadPlaylists));
+                // Validate that API Key is valid against Emby
+                string embySystemInfoURL = GenerateURL(ServerTypes.Emby, URLTypes.EmbyPingURL);
+
+                if (embySystemInfoURL == "")
+                {
+                    logger.LogError($"An error occurred while generating Jellyfin ping URL");
+                    Log.CloseAndFlush();
+                    return;
+                }
+
+                RestResult checkEmbyResult = await ExecuteRestRequest(embySystemInfoURL);
+
+                if (checkEmbyResult.Status == "error")
+                {
+                    logger.LogError($"An error occurred while connecting to {lstServerType.SelectedItem} with the error {checkEmbyResult.ErrorMessage}");
+                    Log.CloseAndFlush();
+                    MessageBox.Show($"Unable to connect with {lstServerType.SelectedItem}. Please make sure that the URL and API key are correct");
+                    return;
+                } else if (checkEmbyResult.Status == "ok") // Make sure that this is really an Emby server
+                {
+                    JObject serverTypeResponse = JsonConvert.DeserializeObject<JObject>(checkEmbyResult.Response.Content);
+
+                    if (serverTypeResponse != null)
+                    {
+                        string checkKey = serverTypeResponse[embyServerKey]?.ToString();
+
+                        if (checkKey == null)
+                        {
+                            MessageBox.Show($"The server that you selected does not appear to be an {lstServerType.SelectedItem} server");
+                            lstServerType.SelectedIndex = -1;
+                            lstServerType.IsEnabled = true;
+                            return;
+                        }
+                    }
+                }
+
+                RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.Remaining);
+
+                // Start a new thread to load all playlists so the UI doesn't lock up while its loading
+                loadPlaylistsThread = new Thread(new ThreadStart(LoadPlaylists));
                 loadPlaylistsThread.Start();
             }
         }
 
-        // Load playlists 
-        private void BtnLoadPlaylists_Click(object sender, EventArgs e) {
-            if (this.isLoading)
+        private async void CheckForUpdates()
+        {
+            string currentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            string updateURL = "https://api.github.com/repos/SegiH/Emby-and-Jellyfin-Playlist-Exporter/releases/latest";
+
+            RestResult updateResult = await ExecuteRestRequest(updateURL);
+
+            if (updateResult.Status == "ok")
+            {
+                dynamic jsonResponse = JsonConvert.DeserializeObject(updateResult.Response.Content);
+
+                string latestTag = jsonResponse["tag_name"]?.ToString();
+
+                if (!string.IsNullOrWhiteSpace(currentVersion) && !String.IsNullOrWhiteSpace(latestTag) && IsVersionString(currentVersion) && IsVersionString(latestTag))
+                {
+                    Version currentVersionInt, latestTagInt;
+
+                    try
+                    {
+                        // Convert both values to int for easy comparison
+                        Version.TryParse(currentVersion, out currentVersionInt);
+
+                        Version.TryParse(latestTag, out latestTagInt);
+
+                        if (currentVersionInt < latestTagInt)
+                        {
+                            Assembly assembly = Assembly.GetExecutingAssembly();
+
+                            string appName = System.IO.Path.GetFileNameWithoutExtension(assembly.Location);
+
+                            string URL = "https://github.com/SegiH/Emby-and-Jellyfin-Playlist-Exporter/releases";
+
+                            // Create the TextBlock
+                            TextBlock textBlock = new TextBlock
+                            {
+                                VerticalAlignment = VerticalAlignment.Center,
+                                HorizontalAlignment = HorizontalAlignment.Center
+                            };
+
+                            // Create the Run (static text)
+                            Run run = new Run($"Update {latestTag} Available");
+
+                            // Create the Hyperlink (clickable text)
+                            Hyperlink hyperlink = new Hyperlink(run)
+                            {
+                                NavigateUri = new Uri(URL)
+                            };
+
+                            // Attach the event handler to the Hyperlink
+                            hyperlink.RequestNavigate += Hyperlink_RequestNavigate;
+
+                            // Add the Run (static text) to the TextBlock
+                            textBlock.Inlines.Add(hyperlink);
+
+                            // Add the TextBlock to the Window's content
+                            MainGrid.Children.Add(textBlock);
+
+                            textBlock.Margin = new System.Windows.Thickness(505, 0, 0, 0);
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        logger.LogError($"Server type is not set in LoadPlaylists()");
+                    }
+                }
+            }
+        }
+
+        private void ChkSelectAllNone_Checked(object sender, RoutedEventArgs e)
+        {
+            if (selectAllNone)
+            {
+                lstPlaylists.SelectedItems.Clear();
+            }
+            else
+            {
+                // Select all items.
+                // There's a known issue where selecting all WPF items pragmatically doesn't show blue highlighting like when you manually select all items
+                lstPlaylists.SelectedItems.Clear();
+
+                // Loop through the list and select all items
+                foreach (var item in lstPlaylists.Items)
+                {
+                    lstPlaylists.SelectedItems.Add(item);
+                }
+            }
+        }
+
+        private Task<RestResult> ExecuteRestRequest(string URL)
+        {
+            IRestClient client = null;
+
+            try
+            {
+                // This prevents the SSL related error "The request was aborted: Could not create SSL/TLS secure channel."
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                client = new RestClient(URL);
+
+                IRestResponse response = client.Execute(new RestRequest());
+
+                if (response.StatusCode != HttpStatusCode.OK) {
+                    throw new Exception();
+                }
+
+                RestResult result = new RestResult();
+
+                result.Status = "ok";
+                result.Response = response;
+
+                return Task.FromResult(result);
+            }
+            catch (Exception err)
+            {
+                RestResult result = new RestResult();
+
+                result.Status = "error";
+                result.ErrorMessage = err.Message;
+
+                return Task.FromResult(result);
+            }
+        }
+
+        private string GenerateURL(string serverType, string urlType, string playlistId = "")
+        {
+            // Check if URL has trailing backslash
+            string jellyfinPingURL = "<URL>/System/Info?api_key=<API_KEY>";
+            string jellyfinPlaylistURL = "<URL>/Users/<USER_ID>/Items?format=json&Recursive=true&IncludeItemTypes=Playlist&api_key=<API_KEY>";
+            string jellyfinPlaylistItemsURL = "<URL>/Playlists/<PLAYLIST_ID>/Items?Fields=Path&userId=<USER_ID>&api_key=<API_KEY>";
+            string jellyfinUsersURL = "<URL>/Users?format=json&api_key=<API_KEY>";
+
+            string embyPlaylistURL = "<URL>/emby/Items?format=json&Recursive=true&IncludeItemTypes=Playlist&api_key=<API_KEY>";
+            string embyPlaylistItemsURL = "<URL>/Items?ParentId=<PLAYLIST_ID>&Format=json&api_key=<API_KEY>";
+            string embyPingURL = "<URL>/emby/System/Info?api_key=<API_KEY>";
+
+            string URL = txtURL.Text;
+
+            if (URL.EndsWith("/"))
+            {
+                URL = URL.Substring(0, URL.Length - 1);
+            }
+
+            string newGeneratedURL;
+
+            switch (serverType)
+            {
+                case ServerTypes.Jellyfin:
+                    switch (urlType)
+                    {
+                        case URLTypes.JellyfinPingURL:
+                            newGeneratedURL = jellyfinPingURL.Replace("<URL>", URL).Replace("<API_KEY>", txtAPIKey.Password);
+                            return newGeneratedURL;
+                        case URLTypes.JellyfinPlaylistURL:
+                            newGeneratedURL = jellyfinPlaylistURL.Replace("<URL>", URL).Replace("<USER_ID>", allUserAccounts[lstUserAccounts.SelectedItem.ToString()]).Replace("<API_KEY>", txtAPIKey.Password);
+                            return newGeneratedURL;
+                        case URLTypes.JellyfinPlaylistItemsURL:
+                            newGeneratedURL = jellyfinPlaylistItemsURL.Replace("<URL>", URL).Replace("<USER_ID>", allUserAccounts[lstUserAccounts.SelectedItem.ToString()]).Replace("<PLAYLIST_ID>", playlistId).Replace("<API_KEY>", txtAPIKey.Password);
+                            return newGeneratedURL;
+                        case URLTypes.JellyfinUsersURL:
+                            newGeneratedURL = jellyfinUsersURL.Replace("<URL>", URL).Replace("<API_KEY>", txtAPIKey.Password);
+                            return newGeneratedURL;
+                    }
+                    break;
+                case ServerTypes.Emby:
+                    switch (urlType)
+                    {
+                        case URLTypes.EmbyPlaylistURL:
+                            newGeneratedURL = embyPlaylistURL.Replace("<URL>", URL).Replace("<API_KEY>", txtAPIKey.Password);
+                            return newGeneratedURL;
+                        case URLTypes.EmbyPlaylistItemsURL:
+                            newGeneratedURL = embyPlaylistItemsURL.Replace("<URL>", URL).Replace("<PLAYLIST_ID>", playlistId).Replace("<API_KEY>", txtAPIKey.Password);
+                            return newGeneratedURL;
+                        case URLTypes.EmbyPingURL:
+                            newGeneratedURL = embyPingURL.Replace("<URL>", URL).Replace("<API_KEY>", txtAPIKey.Password);
+                            return newGeneratedURL;
+                    }
+
+                    break;
+            }
+
+            return "";
+        }
+
+        private void HideShowElements(string which, bool hidden)
+        {
+            List<string> element = new List<string>();
+
+            if (which == Jellyfin_Playlist_Exporter.Models.HideShowElements.First)
+            {
+                element = firstElements;
+            }
+            else if (which == Jellyfin_Playlist_Exporter.Models.HideShowElements.Second)
+            {
+                element = secondElements;
+            }
+            else if (which == Jellyfin_Playlist_Exporter.Models.HideShowElements.Remaining)
+            {
+                element = remainingElements;
+            }
+
+            try
+            {
+                foreach (var item in element)
+                {
+                    if (item != null)
+                    {
+                        // Find the element using its name. If the element is found, hide it
+                        if (FindName(item) is UIElement el)
+                        {
+                            el.Visibility = !hidden ? Visibility.Visible : Visibility.Hidden;
+                        }
+                    }
+                }
+            } catch(Exception ex) {
+                logger.LogError($"An error occurred finding the item in HideShowElements() with the error {ex.Message}");
+            }
+        }
+
+        // Event handler to open the URL when the hyperlink is clicked
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            // Open the default browser and navigate to the URL
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;  // Mark the event as handled
+        }
+
+        private void InitElementProperties()
+        {
+            /* 
+              These elements have their coordinates saved so I can move them up or down 
+              depending on if the user account dropdown is visible or not
+            */
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "lblServerType",
+                Left = (int)lblServerType.Margin.Left,
+                Top = (int)lblServerType.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "lstServerType",
+                Left = (int)lstServerType.Margin.Left,
+                Top = (int)lstServerType.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "lblURL",
+                Left = (int)lblURL.Margin.Left,
+                Top = (int)lblURL.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "txtURL",
+                Left = (int)txtURL.Margin.Left,
+                Top = (int)txtURL.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "lblAPIKey",
+                Left = (int)lblAPIKey.Margin.Left,
+                Top = (int)lblAPIKey.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "btnConnect",
+                Left = (int)btnConnect.Margin.Left,
+                Top = (int)btnConnect.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "txtAPIKey",
+                Left = (int)txtAPIKey.Margin.Left,
+                Top = (int)txtAPIKey.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "lblUserAccount",
+                Left = (int)lblUserAccount.Margin.Left,
+                Top = (int)lblUserAccount.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "lstUserAccounts",
+                Left = (int)lstUserAccounts.Margin.Left,
+                Top = (int)lstUserAccounts.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "lblSaveLocation",
+                Left = (int)lblSaveLocation.Margin.Left,
+                Top = (int)lblSaveLocation.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "txtSaveLocation",
+                Left = (int)txtSaveLocation.Margin.Left,
+                Top = (int)txtSaveLocation.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "btnSaveLocation",
+                Left = (int)btnSaveLocation.Margin.Left,
+                Top = (int)btnSaveLocation.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "chkSelectAllNone",
+                Left = (int)chkSelectAllNone.Margin.Left,
+                Top = (int)chkSelectAllNone.Margin.Top
+            });
+
+            elementsProperties.Add(new ElementModel()
+            {
+                ElementName = "lstPlaylists",
+                Left = (int)lstPlaylists.Margin.Left,
+                Top = (int)lstPlaylists.Margin.Top
+            });
+        }
+
+        private bool IsVersionString(string str)
+        {
+            return Version.TryParse(str, out _);
+        }
+
+        private void LoadPlaylists() {
+            _ = Dispatcher.Invoke(async () =>
+            {
+                string playlistURL = "";
+
+                string serverType = ServerType();
+
+                if (serverType == ServerTypes.Jellyfin)
+                {
+                    playlistURL = GenerateURL(ServerTypes.Jellyfin, URLTypes.JellyfinPlaylistURL);
+
+                    if (playlistURL == "")
+                    {
+                        logger.LogError($"An error occurred while generating the Jellyfin playlist URL");
+                        Log.CloseAndFlush();
+                        return;
+                    }
+                }
+                else if (serverType == ServerTypes.Emby)
+                {
+                    playlistURL = GenerateURL(ServerTypes.Emby, URLTypes.EmbyPlaylistURL);
+
+                    if (playlistURL == "")
+                    {
+                        logger.LogError($"An error occurred while generating the Emby playlist URL");
+                        Log.CloseAndFlush();
+                        return;
+                    }
+                }
+                else // This shouldn't ever happen!
+                {
+                    logger.LogError($"Server type is not set in LoadPlaylists()");
+                    Log.CloseAndFlush();
+                    MessageBox.Show("Something went wrong. Please restart the app.");
+                    return;
+                }
+
+                RestResult playlistResult = await ExecuteRestRequest(playlistURL);
+
+                if (playlistResult.Status == "error")
+                {
+                    logger.LogError($"The error {playlistResult.ErrorMessage} occurred while reading the list of playlists");
+                    Log.CloseAndFlush();
+                    MessageBox.Show("An error occurred while reading the list of playlists");
+                    return;
+                }
+
+                // Convert JSON payload to object of type Playlist
+                allPlaylists = JsonConvert.DeserializeObject<Playlists>(playlistResult.Response.Content);
+
+                if (demoMode)
+                {
+                    Playlists newArray = new Playlists();
+                    Item[] items;
+
+                    List<string> demoPlaylistPayload = new List<string>();
+
+                    if (serverType == ServerTypes.Emby)
+                    {
+                        demoPlaylistPayload = embyDemoPlaylists;
+                    }
+                    else if (serverType == ServerTypes.Jellyfin)
+                    {
+                        demoPlaylistPayload = jellyfinDemoPlaylists;
+                    }
+
+                    items = new Item[demoPlaylistPayload.Count()];
+
+                    int counter = 0;
+
+                    foreach (var demoPlaylistName in demoPlaylistPayload)
+                    {
+                        Item newItem = new Item();
+                        newItem.Name = demoPlaylistName;
+                        items[counter] = newItem;
+
+                        counter = counter + 1;
+                    }
+
+                    newArray.Items = items;
+                    allPlaylists = newArray;
+                }
+
+                // Loop through each playlist
+                foreach (var playlist in allPlaylists.Items)
+                {
+                    // Add playlist name to listbox
+                    lstPlaylists.Items.Add(playlist.Name);
+                }
+
+                lstPlaylists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
+
+                RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.Remaining);
+            });
+        }
+
+        // Load playlists
+        private void LoadPlaylistValidation()
+        {
+            if (isLoading)
                 return;
 
             // A user must be selected
-            if (lstUserAccounts.SelectedIndex == -1 && ServerType() == ServerTypesEnum.Jellyfin) {
+            if (lstUserAccounts.SelectedIndex == -1 && ServerType() == ServerTypes.Jellyfin)
+            {
                 MessageBox.Show("Please select the user account");
                 return;
             }
@@ -339,12 +809,14 @@ namespace EmbyJellyfin_Playlist_Exporter
             }
 
             // Validate required fields
-            if (txtURL.Text.Equals("")) {
+            if (txtURL.Text.Equals(""))
+            {
                 MessageBox.Show("Please enter the URL of your Emby/Jellyfin instance");
                 return;
             }
 
-            if (txtAPIKey.Password.Equals("")) {
+            if (txtAPIKey.Password.Equals(""))
+            {
                 MessageBox.Show("Please enter your API key");
                 return;
             }
@@ -356,276 +828,80 @@ namespace EmbyJellyfin_Playlist_Exporter
             // Clear all items in case the user presses load playlists a 2nd time to refresh the list of playlists.
             lstPlaylists.Items.Clear();
 
-            // Start a new thread to poad all playlists so the UI doesn't lock up while its loading
-            this.loadPlaylistsThread = new Thread(new ThreadStart(this.LoadPlaylists));
+            // Adjust elements as needed
+            AdjustElementsTop();
+
+            // Start a new thread to load all playlists so the UI doesn't lock up while its loading
+            loadPlaylistsThread = new Thread(new ThreadStart(LoadPlaylists));
             loadPlaylistsThread.Start();
         }
 
-        private void ChkSelectAllNone_Checked(object sender, RoutedEventArgs e)
-        {
-            if (selectAllNone)
+        private void LoadUserAccounts() {
+            Dispatcher.Invoke(async () =>
             {
-                lstPlaylists.SelectedItems.Clear();
-            }
-            else
-            {
-                lstPlaylists.SelectAll();
-            }
-        }
+                string usersURL = txtURL.Text + (!txtURL.Text.EndsWith("/") ? "/" : "") + "Users?format=json&api_key=" + txtAPIKey.Password;
 
-        private void HideShowElements(string which, bool hidden)
-        {
-            List<string> element = new List<string>();
+                RestResult usersResult = await ExecuteRestRequest(usersURL);
 
-            if (which == HideShowElementsEnum.First)
-            {
-                element = firstElements;
-            }
-            else if (which == HideShowElementsEnum.Second)
-            {
-                element = secondElements;
-            }
-            else if (which == HideShowElementsEnum.Remaining)
-            {
-                element = remainingElements;
-            }
-
-            foreach (var item in element)
-            {
-                if (item != null)
+                if (usersResult.Status == "error")
                 {
-                    // Find the element using its name
-                    var el = this.FindName(item) as UIElement;
-
-                    // If the element is found, hide it
-                    if (el != null)
-                    {
-                        el.Visibility = !hidden ? Visibility.Visible : Visibility.Hidden;
-                    }
-                }
-            }
-        }
-
-        private void LoadPlaylists() {
-            this.Dispatcher.Invoke(() => {
-                IRestClient client=null, plClient;
-                IRestResponse response, plResponse;
-
-                try {
-                    // This prevents the SSL related error "The request was aborted: Could not create SSL/TLS secure channel."
-                    ServicePointManager.Expect100Continue = true;
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-                    this.Dispatcher.Invoke(() => {
-                        // Call REST endpoint to get all playlists
-                        string playlistURL = "";
-
-                        string serverType = ServerType();
-
-                        if (serverType == ServerTypesEnum.Jellyfin)
-                        {
-                            playlistURL = txtURL.Text + "/Users/" + this.allUserAccounts[lstUserAccounts.SelectedItem.ToString()] + "/Items?format=json&Recursive=true&IncludeItemTypes=Playlist&api_key=" + txtAPIKey.Password;
-                        } else if (serverType == ServerTypesEnum.Emby)
-                        {
-                            playlistURL = txtURL.Text + "/emby/Items?format=json&Recursive=true&IncludeItemTypes=Playlist&api_key=" + txtAPIKey.Password;
-                        } else
-                        {
-                            logger.LogError($"Server type is not set in LoadPlaylists()");
-                            Log.CloseAndFlush();
-                        }
-
-                        client = new RestClient(playlistURL);
-                    });
-
-                    response = client.Execute(new RestRequest());
-
-                    // Convert JSON payload to object of type Playlist
-                    allPlaylists = JsonConvert.DeserializeObject<Playlists>(response.Content);
-
-                    /*if (allPlaylists.TotalRecordCount > 0)
-                    {
-                        btnExportPlaylists.Visibility = Visibility.Visible;
-                    } else
-                    {
-                        btnExportPlaylists.Visibility = Visibility.Hidden;
-                    }*/
-                } catch (Exception err) {
-                    logger.LogError($"The error {err.Message} occurred while reading the list of playlists");
+                    logger.LogError($"The error {usersResult.ErrorMessage} occurred while getting the users");
                     Log.CloseAndFlush();
-                    MessageBox.Show("An error occurred while reading the list of playlists");
+                    MessageBox.Show($"An error occurred while getting the users");
                     return;
                 }
 
-                // Loop through each playlist
-                foreach (var playlist in allPlaylists.Items) {
-                    try {
+                // Clear all user accounts
+                lstUserAccounts.Items.Clear();
 
-                        // Call REST endpoint to get all tracks in the current playlist
-                        string playlistItemsURL = "";
+                try
+                {
+                    // Convert JSON payload to object of type User Account
+                    dynamic jsonResponse = JsonConvert.DeserializeObject(usersResult.Response.Content);
 
-                        switch (lstServerType.SelectedItem)
-                        {
-                            case ServerTypesEnum.Jellyfin:
-                                playlistItemsURL = txtURL.Text + "/Playlists/" + playlist.Id + "/Items?Fields=Path&userId=" + this.allUserAccounts[lstUserAccounts.SelectedItem.ToString()] + "&api_key=" + txtAPIKey.Password;
-                                break;
-                            case ServerTypesEnum.Emby:
-                                playlistItemsURL = txtURL.Text + "/Items?ParentId=" + playlist.Id + "&Format=json&api_key=" + txtAPIKey.Password;
-                                break;
-                        }
+                    // Add empty option
+                    lstUserAccounts.Items.Add("");
 
-                        plClient = new RestClient(playlistItemsURL);
-                        
-                        plResponse = plClient.Execute(new RestRequest());
+                    isAdding = true;
 
-                        // Parse JSON
-                        Playlists currPlaylistTracks = JsonConvert.DeserializeObject<Playlists>(plResponse.Content);
+                    allUserAccounts.Clear();
 
-                        // Assign to the playlist object
-                        playlist.PlaylistTracks = currPlaylistTracks;
-                    } catch (Exception err) {
-                        logger.LogError($"An error occurred while reading the playlist tracks from the playlist \" {playlist.Name} \" with the error \" ${err}");
-                        Log.CloseAndFlush();
-                        MessageBox.Show("An error occurred while reading the playlist tracks from the playlist");
-                        return;
+                    for (int counter = 0; counter < jsonResponse.Count; counter++)
+                    {
+                        string name = jsonResponse[counter].Name.ToString().Replace("}", "").Replace("{", "");
+                        string id = jsonResponse[counter].Id.ToString().Replace("}", "").Replace("{", "");
+
+                        allUserAccounts.Add(name, id);
+                        lstUserAccounts.Items.Add(name);
                     }
 
-                    // Add playlist name to listbox
-                    lstPlaylists.Items.Add(playlist.Name);
+                    if (!Properties.Settings.Default.UserAccount.Equals(""))
+                    {
+                        lstUserAccounts.SelectedItem = Properties.Settings.Default.UserAccount;
+                    }
+                    else
+                        lstUserAccounts.SelectedIndex = 0;
+
+                    isAdding = false;
                 }
-
-                // Sort all items in the listbox
-                lstPlaylists.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Ascending));
-
-                RunStep(HideShowElementsEnum.Remaining);
+                catch (Exception err)
+                {
+                    logger.LogError($"An error occurred while loaing the user accounts with the error \" ${err}");
+                    Log.CloseAndFlush();
+                    MessageBox.Show("An error occurred while loading the user accounts");
+                    return;
+                }
             });
-        }
-
-        private void LoadUserAccounts() {
-            IRestClient client;
-            IRestResponse response;
-
-            // Clear all user accounts
-            lstUserAccounts.Items.Clear();
-
-            try {
-                // This prevents the SSL related error "The request was aborted: Could not create SSL/TLS secure channel."
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-                // Call REST endpoint to get user accounts
-                string usersURL = txtURL.Text + (!txtURL.Text.EndsWith("/") ? "/" : "") + "Users?format=json&api_key=" + txtAPIKey.Password;
-                client = new RestClient(usersURL);
-
-                response = client.Execute(new RestRequest());
-
-                // Convert JSON payload to object of type User Account
-                dynamic jsonResponse = JsonConvert.DeserializeObject(response.Content);
-
-                // Add empty option
-                lstUserAccounts.Items.Add("");
-
-                this.isAdding = true;
-
-                for (int counter = 0; counter < jsonResponse.Count; counter++) {
-                    string name = jsonResponse[counter].Name.ToString().Replace("}", "").Replace("{", "");
-                    string id = jsonResponse[counter].Id.ToString().Replace("}", "").Replace("{", "");
-
-                    allUserAccounts.Add(name, id);
-                    lstUserAccounts.Items.Add(name);
-                }
-
-
-                if (!Properties.Settings.Default.UserAccount.Equals("")) {
-                    lstUserAccounts.SelectedItem = Properties.Settings.Default.UserAccount;
-                } else
-                    lstUserAccounts.SelectedIndex = 0;
-
-                this.isAdding = false;
-            } catch (Exception err) {
-                logger.LogError($"\"An error occurred while reading the user accounts with the error \" ${err}");
-                Log.CloseAndFlush();
-                MessageBox.Show("An error occurred while reading the user account");
-                return;
-            }
         }
 
         // Event when an item is selected or deselected in the list box. The Export Playlists button is disabled if no items are selected in the listbox
         private void LstPlaylist_Selected(object sender, RoutedEventArgs e) {
             if (lstPlaylists.SelectedItems.Count == 0) {
-                btnExportPlaylists.IsEnabled = false;
+                btnExportPlaylists.Visibility = Visibility.Collapsed;
                 btnExportPlaylists.Visibility = Visibility.Hidden;
             } else {
-                btnExportPlaylists.IsEnabled = true;
                 btnExportPlaylists.Visibility = Visibility.Visible;
-            }
-        }
-
-        // Settings dropdown changed
-        private void LstSettings_SelectionChanged(object sender, RoutedEventArgs e) {
-            switch (lstSettings.SelectedIndex) {
-                case 0: // Save Settings
-                    if (txtURL.Text.Equals("")) {
-                        MessageBox.Show("Please enter the URL of your Jellyfin instance");
-                    }
-
-                    // A user must be selected
-                    if (ServerType() == ServerTypesEnum.Jellyfin && lstUserAccounts.SelectedIndex == -1) {
-                        MessageBox.Show("Please select the user account");
-                        return;
-                    }
-
-                    if (txtAPIKey.Password.Equals("")) {
-                        MessageBox.Show("Please enter your API key");
-                        return;
-                    }
-
-                    // Jellyfin URL should always end in / since its a URL path
-                    if (txtURL.Text.EndsWith("/") == false)
-                        txtURL.Text += "/";
-
-                    // If not specified, clear 
-                    if (txtSaveLocation.Text.Equals("")) {
-                        txtSaveLocation.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                    }
-
-                    Properties.Settings.Default.URL = txtURL.Text;
-                    Properties.Settings.Default.APIKey = txtAPIKey.Password;
-
-                    if (lstUserAccounts.SelectedItem != null)
-                    {
-                        Properties.Settings.Default.UserAccount = lstUserAccounts.SelectedItem.ToString();
-                    } else
-                    {
-                        Properties.Settings.Default.UserAccount = "-1";
-                    }
-
-                    Properties.Settings.Default.SaveLocation = txtSaveLocation.Text;
-
-                    if (lstServerType.SelectedItem != null)
-                    {
-                        Properties.Settings.Default.ServerType = lstServerType.SelectedItem.ToString();
-                    } else
-                    {
-                        Properties.Settings.Default.ServerType = "";
-                    }
-                    Properties.Settings.Default.Save();
-
-                    MessageBox.Show("The settings have been saved");
-
-                    lstSettings.SelectedIndex = -1;
-
-                    break;
-                case 1: // Remove saved settings
-                    if (MessageBox.Show("Are you sure that you want to delete the saved settings ?","Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes) {
-                        txtURL.Text = "";
-                        txtAPIKey.Password = "";
-                        txtSaveLocation.Text = "";
-                        Properties.Settings.Default.Save();
-                    }
-
-                    lstSettings.SelectedIndex = -1;
-
-                    break;
+                btnExportPlaylists.Visibility = Visibility.Visible;
             }
         }
 
@@ -635,40 +911,39 @@ namespace EmbyJellyfin_Playlist_Exporter
                 return;
             }
 
+            ResetLayout();
+
+            RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.HideAll.ToString());
+
             switch (lstServerType.SelectedItem)
             {
-                case ServerTypesEnum.Emby:
-                    lstServerType.IsEnabled = false;
-
+                case ServerTypes.Emby:
                     lblUserAccount.Visibility = Visibility.Hidden;
                     lstUserAccounts.Visibility = Visibility.Hidden;
                     btnConnect.Visibility = Visibility.Hidden;
 
+                    RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.First);
+
                     AdjustElementsTop();
 
-                    RunStep(HideShowElementsEnum.First);
-
-                    //chkSelectAllNone.Margin = new System.Windows.Thickness(40, chkSelectAllNone.Margin.Top, chkSelectAllNone.Margin.Right, chkSelectAllNone.Margin.Bottom);
-
                     break;
-                case ServerTypesEnum.Jellyfin:
-                    lstServerType.IsEnabled = false;
-
+                case ServerTypes.Jellyfin:
                     lblUserAccount.Visibility = Visibility.Visible;
                     lstUserAccounts.Visibility = Visibility.Visible;
                     btnConnect.Visibility = Visibility.Visible;
 
-                    RunStep(HideShowElementsEnum.First);
+                    RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.First);
 
                     break;
                 default:
                     lstUserAccounts.SelectedIndex = -1;
-                    RunStep(HideShowElementsEnum.HideAll);
+                    RunStep(Jellyfin_Playlist_Exporter.Models.HideShowElements.HideAll);
                     break;
             }
         }
+ 
         private void LstUserAccounts_SelectionChanged(object sender, RoutedEventArgs e) {
-            if (this.isAdding == true)
+            if (isAdding == true)
                 return;
 
             // Since we add "" as the first item we have to make sure to ignore index 0
@@ -677,12 +952,29 @@ namespace EmbyJellyfin_Playlist_Exporter
                 lstPlaylists.Items.Clear();
             }
 
-            //ResetLayout();
-            RunStep(HideShowElementsEnum.Playlists);
-
             if (lstUserAccounts.SelectedIndex > 0)
             {
-                BtnLoadPlaylists_Click(new object(), new EventArgs());
+                if (demoMode)
+                {
+                    lstUserAccounts.Visibility = Visibility.Collapsed;
+                    lstUserAccountsDemoMode.Visibility = Visibility.Visible;
+                }
+
+                LoadPlaylistValidation();
+            }
+        }
+
+        private void ResetLayout()
+        {
+            foreach (var element in elementsProperties)
+            {
+                FrameworkElement el = FindName(element.ElementName) as FrameworkElement;
+
+                if (el != null)
+                {
+                    var currentMargin = el.Margin;
+                    el.Margin = new System.Windows.Thickness(el.Margin.Left, el.Margin.Top, currentMargin.Right, currentMargin.Bottom);
+                }
             }
         }
 
@@ -692,84 +984,132 @@ namespace EmbyJellyfin_Playlist_Exporter
 
             switch (step)
             {
-                case HideShowElementsEnum.HideAll:
+                case Jellyfin_Playlist_Exporter.Models.HideShowElements.HideAll:
                     HideShowElements("First", true);
                     HideShowElements("Second", true);
                     HideShowElements("Remaining", true);
 
-                    this.Height = 100;
+                    Height = 100;
 
                     lstUserAccounts.SelectedIndex = -1;
+                    chkSelectAllNone.IsChecked = false;
 
                     break;
-                case HideShowElementsEnum.First:
+                case Jellyfin_Playlist_Exporter.Models.HideShowElements.First:
                     HideShowElements("First", false);
                     HideShowElements("Second", true);
-                    //HideShowElements("Playlists", true);
                     HideShowElements("Remaining", true);
-                    this.Height = 180;
+
+                    Height = 170;
+
+                    chkSelectAllNone.IsChecked = false;
+
                     break;
-                case HideShowElementsEnum.Second:
+                case Jellyfin_Playlist_Exporter.Models.HideShowElements.Second:
                     HideShowElements("First", false);
 
-                    if (serverType != "" && serverType == ServerTypesEnum.Jellyfin)
-                    {
-                        HideShowElements("Second", false);
-                    }
-
-                    //HideShowElements("Playlists", true);
-                    HideShowElements("Remaining", true);
-                    this.Height = 225;
-                    break;
-                case HideShowElementsEnum.Playlists:
-                    HideShowElements("First", false);
-
-                    if (serverType != "" && serverType == ServerTypesEnum.Jellyfin)
+                    if (serverType != "" && serverType == ServerTypes.Jellyfin)
                     {
                         HideShowElements("Second", false);
                     }
 
                     HideShowElements("Remaining", true);
 
-                    this.Height = 225;
+                    Height = 225;
 
-                    if (serverType == ServerTypesEnum.Jellyfin)
-                    {
-                        this.Height = this.Height + topAdjustment;
-                    }
+                    chkSelectAllNone.IsChecked = false;
+
                     break;
-                case HideShowElementsEnum.Remaining:
+                case Jellyfin_Playlist_Exporter.Models.HideShowElements.Playlists:
+                    HideShowElements("First", false);
+
+                    if (serverType != "" && serverType == ServerTypes.Jellyfin)
+                    {
+                        HideShowElements("Second", false);
+                    }
+
+                    HideShowElements("Remaining", true);
+
+                    Height = 225;
+
+                    if (serverType == ServerTypes.Jellyfin)
+                    {
+                        Height = Height + topAdjustment;
+                    }
+
+                    break;
+                case Jellyfin_Playlist_Exporter.Models.HideShowElements.Remaining:
                     HideShowElements("Remaining", false);
 
-                    if (serverType != ServerTypesEnum.Jellyfin)
+                    if (serverType != ServerTypes.Jellyfin)
                     {
-                        this.Height = 650;
+                        Height = 650;
                     }
                     else
                     {
-                        this.Height = 700;
+                        Height = 700;
                     }
 
                     break;
                 default:
                     break;
             }
+        }
+
+        private void RemoveSettings_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Are you sure that you want to delete the saved settings ?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                txtURL.Text = "";
+                txtAPIKey.Password = "";
+                txtSaveLocation.Text = "";
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void SaveSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.URL = txtURL.Text;
+            Properties.Settings.Default.APIKey = txtAPIKey.Password;
+
+            if (lstUserAccounts.SelectedItem != null)
+            {
+                Properties.Settings.Default.UserAccount = lstUserAccounts.SelectedItem.ToString();
+            }
+            else
+            {
+                Properties.Settings.Default.UserAccount = "-1";
+            }
+
+            Properties.Settings.Default.SaveLocation = txtSaveLocation.Text;
+
+            if (lstServerType.SelectedItem != null)
+            {
+                Properties.Settings.Default.ServerType = lstServerType.SelectedItem.ToString();
+            }
+            else
+            {
+                Properties.Settings.Default.ServerType = "";
+            }
+            Properties.Settings.Default.Save();
+
+            MessageBox.Show("The settings have been saved");
         }
 
         private string ServerType()
         {
             switch (lstServerType.SelectedItem)
             {
-                case ServerTypesEnum.Emby:
+                case ServerTypes.Emby:
                     return "Emby";
-                case ServerTypesEnum.Jellyfin:
+                case ServerTypes.Jellyfin:
                     return "Jellyfin";
                 default:
                     return "";
             }
         }
 
-        private void txtURL_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void TxtURL_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             if (txtURL.Text.EndsWith("/"))
             {
