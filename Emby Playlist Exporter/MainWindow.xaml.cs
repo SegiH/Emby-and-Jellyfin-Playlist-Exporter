@@ -1119,8 +1119,15 @@ namespace EmbyJellyfin_Playlist_Exporter
 
         // Write m3u file
         private void WriteM3U(string playlistName,Playlists playlistTracks) {
-             // Make sure that the save location has a trailing slash. Since VS works on Mac and Windows, we have to support delimiter for both platforms (and Linux if I can ever get it to work with Mono which doesn't currently support WPF)
-             if (txtSaveLocation.Text.EndsWith("\\") == false && txtSaveLocation.Text.EndsWith("/") == false) {
+             string[] badChars = { "<", ">", ":", "\"", "/", "\\", "|", "?", "*" };
+
+             foreach (var badChar in badChars)
+             {
+                playlistName = playlistName.Replace(badChar, "");
+             }
+
+            // Make sure that the save location has a trailing slash. Since VS works on Mac and Windows, we have to support delimiter for both platforms (and Linux if I can ever get it to work with Mono which doesn't currently support WPF)
+            if (txtSaveLocation.Text.EndsWith("\\") == false && txtSaveLocation.Text.EndsWith("/") == false) {
                   txtSaveLocation.Text+= Path.DirectorySeparatorChar;
              }
 
