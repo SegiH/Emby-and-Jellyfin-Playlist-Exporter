@@ -17,3 +17,6 @@ I have included Windows 64-bit binaries but if you want to build the application
  1. Select a location where the playlists will be saved
  1. Select the playlist that you want to export. If you want to select more than one playlist, hold Ctrl while clicking on the playlist name.
  1. Click on Export to export the selected playlists which will be saved into the location you selected in step 5.
+
+ 2. ## Note
+Jellyfin no longer reads M3U8 format files. You can still use my application to export and back up your playlist but they can't be directly imported into Jellyfin any more due to the removal of m3u8 support.
